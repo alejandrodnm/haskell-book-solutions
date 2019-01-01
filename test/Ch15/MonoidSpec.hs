@@ -70,20 +70,44 @@ semigroupFunAssoc :: (Eq b, Semigroup m)
                   -> Fun a b
                   -> Bool
 semigroupFunAssoc wrap eval point a b c =
-  eval (a' <> (b' <> c')) point == eval ((a' <> b') <> c') point
-    where
-      a' = wrap a
-      b' = wrap b
-      c' = wrap c
+    eval (a' <> (b' <> c')) point == eval ((a' <> b') <> c') point
+  where
+    a' = wrap a
+    b' = wrap b
+    c' = wrap c
 
 monoidLeftIdentity :: (Eq m, Monoid m) => m -> Bool
 monoidLeftIdentity a = (mempty <> a) == a
 
+monoidCombineLeftIdentity
+    :: (Eq b, Monoid m)
+    => (Fun a b -> m)
+    -> (m -> a -> b)
+    -> a
+    -> Fun a b
+    -> Bool
+monoidCombineLeftIdentity wrap eval point a =
+    eval (mempty <> a') point  == eval a' point
+  where
+    a' = wrap a
+
 monoidRightIdentity :: (Eq m, Monoid m) => m -> Bool
 monoidRightIdentity a = (a <> mempty) == a
 
+monoidCombineRightIdentity
+    :: (Eq b, Monoid m)
+    => (Fun a b -> m)
+    -> (m -> a -> b)
+    -> a
+    -> Fun a b
+    -> Bool
+monoidCombineRightIdentity wrap eval point a =
+    eval (a' <> mempty) point  == eval a' point
+  where
+    a' = wrap a
+
 spec :: Spec
-spec =
+spec = do
     describe "Semi groups" $ do
         it "Trivial" $
             property (semigroupAssoc :: TrivAssoc)
@@ -100,3 +124,23 @@ spec =
                 )
         it "Validation" $
             property (semigroupAssoc :: ValidationAssoc)
+    describe "Monoid" $ do
+        context "Trivial" $ do
+            it "Left Identity" $
+                property (monoidLeftIdentity :: Trivial -> Bool)
+            it "Right Identity" $
+                property (monoidRightIdentity :: Trivial -> Bool)
+        context "Identity" $ do
+            it "Left Identity" $
+                property (monoidLeftIdentity :: Identity String -> Bool)
+            it "Right Identity" $
+                property (monoidRightIdentity :: Identity (Sum Int) -> Bool)
+        context "Combine" $ do
+            it "Left Identity" $
+                property
+                    (monoidCombineLeftIdentity (Combine . applyFun) unCombine
+                        :: Int -> Fun Int (Sum Int) -> Bool)
+            it "Right Identity" $
+                property
+                    (monoidCombineRightIdentity (Combine . applyFun) unCombine
+                        :: Int -> Fun Int (Sum Int) -> Bool)
