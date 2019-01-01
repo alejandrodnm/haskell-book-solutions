@@ -1,7 +1,7 @@
-module WordNumberSpec (spec) where
+module Ch14.WordNumberSpec (spec) where
 
+import           Ch14.WordNumber (digitToWord, digits, wordNumber)
 import           Test.Hspec
-import           WordNumber (digitToWord, digits, wordNumber)
 
 spec :: Spec
 spec = do

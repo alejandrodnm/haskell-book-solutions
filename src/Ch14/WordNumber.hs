@@ -1,4 +1,4 @@
-module WordNumber where
+module Ch14.WordNumber where
 
 import           Data.List (intercalate)
 
