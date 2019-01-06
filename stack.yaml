@@ -40,6 +40,8 @@ packages:
 extra-deps:
 - hspec-2.6.0
 - QuickCheck-2.12.6.1
+- checkers-0.4.11
+- hspec-checkers-0.1.0.2
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

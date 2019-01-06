@@ -48,3 +48,5 @@ tests:
     - haskell-programming-book
     - QuickCheck
     - hspec
+    - checkers
+    - hspec-checkers
